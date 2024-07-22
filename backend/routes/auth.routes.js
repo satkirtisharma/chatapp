@@ -1,8 +1,12 @@
-import express  from "express";
-import cookieParser from 'cookie-parser';  
+import express from "express";
 import { login, logout, signup } from "../controllers/auth.controller.js";
-const router= express.Router();
-router.post('/signup',signup);
-router.post('/login',login);
-router.post('/logout',logout);
+
+const router = express.Router();
+
+router.post("/signup", signup);
+
+router.post("/login", login);
+
+router.post("/logout", logout);
+
 export default router;
