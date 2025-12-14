@@ -16,9 +16,16 @@ const useGetMessages = () => {
 				const data = await apiFetch(
 					`/api/messages/${selectedConversation._id}`
 				);
-				setMessages(data);
+
+				// 🔥 IMPORTANT FIX: messages hamesha array hi rahe
+				if (Array.isArray(data)) {
+					setMessages(data);
+				} else {
+					setMessages([]);
+				}
 			} catch (error) {
 				toast.error(error.message);
+				setMessages([]); // safety
 			} finally {
 				setLoading(false);
 			}
