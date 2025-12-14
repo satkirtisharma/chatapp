@@ -11,9 +11,16 @@ const useGetConversations = () => {
 			setLoading(true);
 			try {
 				const data = await apiFetch("/api/users");
-				setConversations(data);
+
+				// 🔥 SAFETY: ensure array
+				if (Array.isArray(data)) {
+					setConversations(data);
+				} else {
+					setConversations([]);
+				}
 			} catch (error) {
 				toast.error(error.message);
+				setConversations([]); // fallback
 			} finally {
 				setLoading(false);
 			}
@@ -26,3 +33,4 @@ const useGetConversations = () => {
 };
 
 export default useGetConversations;
+
