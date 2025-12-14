@@ -4,33 +4,49 @@ import express from "express";
 
 const app = express();
 
+// HTTP server create
 const server = http.createServer(app);
+
+// Socket.io server with proper CORS
 const io = new Server(server, {
 	cors: {
-		origin: ["http://localhost:3000"],
+		origin: [
+			"https://chatapp-frontend-opal-six.vercel.app",
+			"http://localhost:5173",
+		],
 		methods: ["GET", "POST"],
+		credentials: true,
 	},
 });
 
+// userId -> socketId map
+const userSocketMap = {}; // { userId: socketId }
+
+// helper function
 export const getReceiverSocketId = (receiverId) => {
 	return userSocketMap[receiverId];
 };
 
-const userSocketMap = {}; // {userId: socketId}
-
+// socket connection
 io.on("connection", (socket) => {
-	console.log("a user connected", socket.id);
+	console.log("✅ User connected:", socket.id);
 
 	const userId = socket.handshake.query.userId;
-	if (userId != "undefined") userSocketMap[userId] = socket.id;
 
-	// io.emit() is used to send events to all the connected clients
+	if (userId && userId !== "undefined") {
+		userSocketMap[userId] = socket.id;
+	}
+
+	// send online users list to everyone
 	io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
-	// socket.on() is used to listen to the events. can be used both on client and server side
 	socket.on("disconnect", () => {
-		console.log("user disconnected", socket.id);
-		delete userSocketMap[userId];
+		console.log("❌ User disconnected:", socket.id);
+
+		if (userId) {
+			delete userSocketMap[userId];
+		}
+
 		io.emit("getOnlineUsers", Object.keys(userSocketMap));
 	});
 });
