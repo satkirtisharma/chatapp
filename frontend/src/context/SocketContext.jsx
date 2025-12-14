@@ -15,27 +15,34 @@ export const SocketContextProvider = ({ children }) => {
 
 	useEffect(() => {
 		if (authUser) {
-			const socket = io("https://chat-app-yt.onrender.com", {
-				query: {
-					userId: authUser._id,
-				},
-			});
+			const socket = io(
+				"https://chatapp-backend-5kcb.onrender.com",
+				{
+					query: {
+						userId: authUser._id,
+					},
+					withCredentials: true,
+				}
+			);
 
 			setSocket(socket);
 
-			// socket.on() is used to listen to the events. can be used both on client and server side
 			socket.on("getOnlineUsers", (users) => {
 				setOnlineUsers(users);
 			});
 
-			return () => socket.close();
+			return () => socket.disconnect();
 		} else {
 			if (socket) {
-				socket.close();
+				socket.disconnect();
 				setSocket(null);
 			}
 		}
 	}, [authUser]);
 
-	return <SocketContext.Provider value={{ socket, onlineUsers }}>{children}</SocketContext.Provider>;
+	return (
+		<SocketContext.Provider value={{ socket, onlineUsers }}>
+			{children}
+		</SocketContext.Provider>
+	);
 };
