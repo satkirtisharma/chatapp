@@ -17,13 +17,14 @@ const useGetMessages = () => {
 					`/api/messages/${selectedConversation._id}`
 				);
 
-				// ✅ ONLY update when valid array comes
+				// ✅ Only update when valid array
 				if (Array.isArray(data)) {
 					setMessages(data);
 				}
+				// ❌ kabhi bhi setMessages([]) mat karo
 			} catch (error) {
 				toast.error(error.message);
-				// ❌ DO NOT clear messages here
+				// ❌ messages ko clear mat karo
 			} finally {
 				setLoading(false);
 			}
