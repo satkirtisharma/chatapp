@@ -25,9 +25,15 @@ const useListenMessages = () => {
 			sound.play();
 
 			setMessages((prev) => {
-				if (!Array.isArray(prev)) return [newMessage];
-				return [...prev, newMessage];
-			});
+	if (!Array.isArray(prev)) return [newMessage];
+
+	// 🔥 DUPLICATE GUARD
+	const exists = prev.some((m) => m._id === newMessage._id);
+	if (exists) return prev;
+
+	return [...prev, newMessage];
+});
+
 		};
 
 		socket.on("newMessage", handleNewMessage);
