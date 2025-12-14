@@ -18,9 +18,8 @@ export const SocketContextProvider = ({ children }) => {
 			const socket = io(
 				"https://chatapp-backend-5kcb.onrender.com",
 				{
-					query: {
-						userId: authUser._id,
-					},
+					query: { userId: authUser._id },
+					transports: ["websocket"], // 🔥 IMPORTANT FIX
 					withCredentials: true,
 				}
 			);
@@ -32,11 +31,11 @@ export const SocketContextProvider = ({ children }) => {
 			});
 
 			return () => socket.disconnect();
-		} else {
-			if (socket) {
-				socket.disconnect();
-				setSocket(null);
-			}
+		}
+
+		if (socket) {
+			socket.disconnect();
+			setSocket(null);
 		}
 	}, [authUser]);
 
