@@ -14,30 +14,30 @@ export const SocketContextProvider = ({ children }) => {
 	const { authUser } = useAuthContext();
 
 	useEffect(() => {
-		if (authUser) {
-			const socket = io(
-				"https://chatapp-backend-5kcb.onrender.com",
-				{
-					query: { userId: authUser._id },
-					transports: ["websocket"], // 🔥 IMPORTANT FIX
-					withCredentials: true,
-				}
-			);
+		// 🔥 CONNECT ONLY WHEN USER EXISTS
+		if (!authUser?._id) return;
 
-			setSocket(socket);
+		const socketInstance = io(
+			"https://chatapp-backend-5kcb.onrender.com",
+			{
+				query: { userId: authUser._id },
+				withCredentials: true,
+				transports: ["websocket"],
+			}
+		);
 
-			socket.on("getOnlineUsers", (users) => {
-				setOnlineUsers(users);
-			});
+		setSocket(socketInstance);
 
-			return () => socket.disconnect();
-		}
+		socketInstance.on("getOnlineUsers", (users) => {
+			setOnlineUsers(users);
+		});
 
-		if (socket) {
-			socket.disconnect();
+		// 🔥 CLEANUP ONLY ON LOGOUT / UNMOUNT
+		return () => {
+			socketInstance.disconnect();
 			setSocket(null);
-		}
-	}, [authUser]);
+		};
+	}, [authUser?._id]); // 🔥 VERY IMPORTANT
 
 	return (
 		<SocketContext.Provider value={{ socket, onlineUsers }}>
