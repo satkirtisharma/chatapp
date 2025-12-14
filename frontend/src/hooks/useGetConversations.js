@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+import { apiFetch } from "../utils/api";
 
 const useGetConversations = () => {
 	const [loading, setLoading] = useState(false);
@@ -11,16 +10,7 @@ const useGetConversations = () => {
 		const getConversations = async () => {
 			setLoading(true);
 			try {
-				const res = await fetch(`${BACKEND_URL}/api/users`, {
-					credentials: "include",
-				});
-
-				const data = await res.json();
-
-				if (!res.ok) {
-					throw new Error(data.error || "Failed to fetch users");
-				}
-
+				const data = await apiFetch("/api/users");
 				setConversations(data);
 			} catch (error) {
 				toast.error(error.message);
