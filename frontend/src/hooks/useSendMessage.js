@@ -21,7 +21,11 @@ const useSendMessage = () => {
 			);
 
 			// ✅ safe state update
-			setMessages((prev) => [...prev, data]);
+			setMessages((prev) => {
+	if (!Array.isArray(prev)) return [data];
+	return [...prev, data];
+});
+
 		} catch (error) {
 			toast.error(error.message);
 		} finally {
