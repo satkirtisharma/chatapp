@@ -1,8 +1,7 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useAuthContext } from "../context/AuthContext";
-
-const API_URL = import.meta.env.VITE_BACKEND_URL;
+import { apiFetch } from "../utils/api";
 
 const useLogin = () => {
 	const [loading, setLoading] = useState(false);
@@ -16,16 +15,10 @@ const useLogin = () => {
 
 		setLoading(true);
 		try {
-			const res = await fetch(`${API_URL}/api/auth/login`, {
+			const data = await apiFetch("/api/auth/login", {
 				method: "POST",
-				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ username, password }),
 			});
-
-			const data = await res.json();
-			if (!res.ok) {
-				throw new Error(data.error || "Login failed");
-			}
 
 			localStorage.setItem("chat-user", JSON.stringify(data));
 			setAuthUser(data);
