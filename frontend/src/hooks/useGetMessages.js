@@ -17,15 +17,13 @@ const useGetMessages = () => {
 					`/api/messages/${selectedConversation._id}`
 				);
 
-				// 🔥 IMPORTANT FIX: messages hamesha array hi rahe
+				// ✅ ONLY update when valid array comes
 				if (Array.isArray(data)) {
 					setMessages(data);
-				} else {
-					setMessages([]);
 				}
 			} catch (error) {
 				toast.error(error.message);
-				setMessages([]); // safety
+				// ❌ DO NOT clear messages here
 			} finally {
 				setLoading(false);
 			}
