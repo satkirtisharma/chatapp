@@ -9,17 +9,24 @@ const useLogout = () => {
 	const logout = async () => {
 		setLoading(true);
 		try {
-			const res = await fetch("/api/auth/logout", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-			});
+			const res = await fetch(
+				`${import.meta.env.VITE_BACKEND_URL}/api/auth/logout`,
+				{
+					method: "POST",
+					credentials: "include", // 🔥 VERY IMPORTANT
+				}
+			);
+
 			const data = await res.json();
 			if (data.error) {
 				throw new Error(data.error);
 			}
 
+			// frontend clean
 			localStorage.removeItem("chat-user");
 			setAuthUser(null);
+
+			toast.success("Logout successful");
 		} catch (error) {
 			toast.error(error.message);
 		} finally {
@@ -29,4 +36,6 @@ const useLogout = () => {
 
 	return { loading, logout };
 };
+
 export default useLogout;
+
